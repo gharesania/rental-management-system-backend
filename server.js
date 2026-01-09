@@ -1,7 +1,10 @@
-const express = require('express');
-require('dotenv').config();
-const cors = require('cors');
-const path = require('path');
+const express = require("express");
+require("dotenv").config();
+const cors = require("cors");
+const path = require("path");
+
+// Routes
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -12,13 +15,16 @@ const connectDB = require("./config/db");
 // connectDB();
 
 //Middleware
-app.use(express.json())
-app.use(cors())
+app.use(express.json());
+app.use(cors());
 
-app.get('/', (req, res) => {
-    res.send("Hello World !!!")
+// Routes
+app.use("/api/auth", authRoutes);
+
+app.get("/", (req, res) => {
+  res.send("Hello World !!!");
 });
 
 app.listen(port, () => {
-    console.log(`Server is running at ${port} ✅`);
+  console.log(`Server is running at ${port} ✅`);
 });
