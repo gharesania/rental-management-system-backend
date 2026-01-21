@@ -7,8 +7,7 @@ const path = require("path");
 const authRoutes = require("./routes/authRoutes");
 const buildingRoutes = require("./routes/buildingRoutes");
 const publicRoutes = require("./routes/publicRoutes");
-
-
+const roomRoutes = require("./routes/roomRoutes");
 
 const app = express();
 
@@ -24,8 +23,9 @@ app.use(cors());
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/buildings", buildingRoutes)
+app.use("/api/buildings", buildingRoutes);
 app.use("/api/public", publicRoutes);
+app.use("/api/rooms", roomRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World !!!");
