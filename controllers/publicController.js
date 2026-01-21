@@ -11,7 +11,7 @@ const getBuildingInfo = async (req, res) => {
       return res.status(404).json({ message: "Building not found" });
     }
 
-    res.status(200).json({ building });
+    res.status(200).json({ success: true, data: building });
   } catch (error) {
     console.error("getBuildingInfo error:", error);
     res.status(500).json({ message: "Internal server error" });
