@@ -5,6 +5,8 @@ const path = require("path");
 
 // Routes
 const authRoutes = require("./routes/authRoutes");
+const publicRoutes = require("./routes/publicRoutes");
+
 
 const app = express();
 
@@ -20,6 +22,7 @@ app.use(cors());
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/public", publicRoutes)
 
 app.get("/", (req, res) => {
   res.send("Hello World !!!");
