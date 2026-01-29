@@ -4,10 +4,11 @@ const cors = require("cors");
 const path = require("path");
 
 // Routes
-const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes")
 const buildingRoutes = require("./routes/buildingRoutes");
-const publicRoutes = require("./routes/publicRoutes");
 const roomRoutes = require("./routes/roomRoutes");
+const leaseRoutes = require("./routes/leaseRoutes");
 
 const app = express();
 
@@ -22,10 +23,12 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
-app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+// app.use("/api/public", publicRoutes);
 app.use("/api/buildings", buildingRoutes);
-app.use("/api/public", publicRoutes);
 app.use("/api/rooms", roomRoutes);
+app.use("/api/leases", leaseRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World !!!");

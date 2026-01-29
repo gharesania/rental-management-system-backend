@@ -34,4 +34,19 @@ const getAllBuildings = async (req, res) => {
   }
 };
 
-module.exports = {createBuilding, getAllBuildings}
+const updateBuilding = async (req, res) => {
+  const building = await Building.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  );
+  res.send({ success: true, data: building });
+};
+
+const deleteBuilding = async (req, res) => {
+  await Building.findByIdAndUpdate(req.params.id, { isActive: false });
+  res.send({ success: true, msg: "Building deleted" });
+};
+
+
+module.exports = {createBuilding, getAllBuildings, updateBuilding, deleteBuilding}
