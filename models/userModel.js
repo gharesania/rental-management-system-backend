@@ -39,10 +39,15 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    assignedRoom: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Room",
+      default: null,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model("User", userSchema);
