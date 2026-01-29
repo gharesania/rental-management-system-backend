@@ -38,6 +38,15 @@ const roomSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
+    tenant: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    occupiedFrom: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
