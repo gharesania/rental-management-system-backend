@@ -8,7 +8,6 @@ const userRoutes = require("./routes/userRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes")
 const buildingRoutes = require("./routes/buildingRoutes");
 const roomRoutes = require("./routes/roomRoutes");
-const leaseRoutes = require("./routes/leaseRoutes");
 
 const app = express();
 
@@ -28,7 +27,6 @@ app.use("/api/dashboard", dashboardRoutes);
 // app.use("/api/public", publicRoutes);
 app.use("/api/buildings", buildingRoutes);
 app.use("/api/rooms", roomRoutes);
-app.use("/api/leases", leaseRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World !!!");
