@@ -2,6 +2,8 @@ const Room = require("../models/roomModel");
 
 const createRoom = async (req, res) => {
   try {
+    console.log("REQ.USER ===>", req.user);
+
     const { building, roomNumber, floor, rent, deposit } = req.body;
 
     if (!building || !roomNumber || rent == null || deposit == null) {
@@ -22,15 +24,19 @@ const createRoom = async (req, res) => {
       floor,
       rent,
       deposit,
-      createdBy: req.user.Id,
+      createdBy: req.user.id, // ✅ FIXED
     });
 
-    res.status(201).send({ msg: "Room Created Successfully ✅" });
+    res.status(201).send({
+      success: true,
+      msg: "Room Created Successfully ✅",
+    });
   } catch (error) {
     console.error("createRoom error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 const getAllRooms = async (req, res) => {
   try {
