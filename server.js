@@ -8,7 +8,9 @@ const userRoutes = require("./routes/userRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes")
 const buildingRoutes = require("./routes/buildingRoutes");
 const roomRoutes = require("./routes/roomRoutes");
-const paymentRoutes = require("./routes/paymentRoutes")
+const paymentRoutes = require("./routes/paymentRoutes");
+const tenantDashboardRoutes = require("./routes/tenantDashboardRoutes");
+
 
 const app = express();
 
@@ -26,8 +28,10 @@ app.use(cors());
 app.use("/api/user", userRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/buildings", buildingRoutes);
-app.use("/api/rooms", roomRoutes);
+app.use("/api/room", roomRoutes);
+app.use("/api/tenant", tenantDashboardRoutes);
 app.use("/api/payments", paymentRoutes);
+
 
 
 app.get("/", (req, res) => {

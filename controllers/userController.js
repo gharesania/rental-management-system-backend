@@ -2,6 +2,8 @@ const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const Building = require("../models/buildingModel");
+const Room = require("../models/roomModel");
 
 const register = async (req, res) => {
   try {
@@ -87,7 +89,8 @@ const getUserInfo = async (req, res) => {
   try {
     console.log("REQ.USER 👉", req.user);
 
-    const user = await User.findById(req.user.userId).select("-password");
+    const user = await User.findById(req.user.id).select("-password");
+
 
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
@@ -133,6 +136,41 @@ const updateProfile = async (req, res) => {
   }
 };
 
+const getAllTenants = async (req, res) => {
+  try {
+    const { search } = req.query;
+
+    let filter = { role: "Tenant" };
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { contactNumber: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const tenants = await User.find(filter)
+      .select("-password")
+      .populate({
+        path: "assignedRoom",
+        select: "roomNumber",
+        populate: {
+          path: "building",
+          select: "name",
+        },
+      });
+
+    res.status(200).send({
+      success: true,
+      data: tenants,
+    });
+  } catch (error) {
+    console.error("getAllTenants error:", error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+};
+
 const getBuildingInfo = async (req, res) => {
   try {
     const building = await Building.findOne({ isActive: true }).select(
@@ -169,39 +207,6 @@ const getAvailableRooms = async (req, res) => {
   }
 };
 
-const getAllTenants = async (req, res) => {
-  try {
-    const { search } = req.query;
 
-    let filter = { role: "Tenant" };
-
-    if (search) {
-      filter.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
-        { contactNumber: { $regex: search, $options: "i" } },
-      ];
-    }
-
-    const tenants = await User.find(filter)
-      .select("-password")
-      .populate({
-        path: "assignedRoom",
-        select: "roomNumber",
-        populate: {
-          path: "building",
-          select: "name",
-        },
-      });
-
-    res.status(200).send({
-      success: true,
-      data: tenants,
-    });
-  } catch (error) {
-    console.error("getAllTenants error:", error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-};
 
 module.exports = { register, login, getUserInfo, updateProfile, getBuildingInfo, getAvailableRooms, getAllTenants};
