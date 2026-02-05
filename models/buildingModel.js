@@ -12,7 +12,6 @@ const buildingSchema = mongoose.Schema(
     },
     contactEmail: {
       type: String,
-      required: true,
       lowercase: true,
     },
     contactNumber: {

@@ -10,7 +10,12 @@ router.get("/getAllBuildings", auth, admin, buildingController.getAllBuildings);
 
 router.put("/updateBuilding/:id", auth, admin, buildingController.updateBuilding);
 
-router.get("/deleteBuilding/:id", auth, admin, buildingController.deleteBuilding);
+router.delete(
+  "/deleteBuilding/:id",
+  auth,
+  admin,
+  buildingController.deleteBuilding
+);
 
 
 module.exports = router
