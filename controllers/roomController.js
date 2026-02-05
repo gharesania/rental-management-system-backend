@@ -1,4 +1,5 @@
 const Room = require("../models/roomModel");
+const User = require("../models/userModel");
 
 const createRoom = async (req, res) => {
   try {
@@ -24,7 +25,7 @@ const createRoom = async (req, res) => {
       floor,
       rent,
       deposit,
-      createdBy: req.user.id, // ✅ FIXED
+      createdBy: req.user.id,
     });
 
     res.status(201).send({
@@ -36,7 +37,6 @@ const createRoom = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 const getAllRooms = async (req, res) => {
   try {
@@ -86,7 +86,15 @@ const getRoomById = async (req, res) => {
 
 const updateRoom = async (req, res) => {
   try {
-    const room = await Room.findByIdAndUpdate(req.params.id, req.body, {
+    const allowedUpdates = (({ roomNumber, floor, rent, deposit, status }) => ({
+      roomNumber,
+      floor,
+      rent,
+      deposit,
+      status,
+    }))(req.body);
+
+    const room = await Room.findByIdAndUpdate(req.params.id, allowedUpdates, {
       new: true,
     });
 
@@ -107,23 +115,23 @@ const updateRoom = async (req, res) => {
 
 const deleteRoom = async (req, res) => {
   try {
-    const room = await Room.findByIdAndUpdate(
-      req.params.id,
-      { isActive: false },
-      { new: true },
-    );
+    const room = await Room.findById(req.params.id);
 
     if (!room) {
-      return res.status(404).send({ message: "Room not found" });
+      return res.status(404).send({ msg: "Room not found" });
     }
 
-    res.status(200).send({
-      success: true,
-      message: "Room deleted successfully",
-    });
+    if (room.status === "Occupied") {
+      return res.status(400).send({ msg: "Cannot delete occupied room" });
+    }
+
+    room.isActive = false;
+    await room.save();
+
+    res.send({ success: true, msg: "Room deleted successfully" });
   } catch (error) {
-    console.error("deleteRoom error:", error);
-    res.status(500).send({ message: "Internal Server Error" });
+    console.log("DeleteRoom Error: ", error);
+    res.status(500).send({ msg: "Internal Server Error" });
   }
 };
 
@@ -186,7 +194,7 @@ const getBuildingRoomStats = async (req, res) => {
 
 const assignTenantToRoom = async (req, res) => {
   try {
-    const { roomId, tenantId, occupiedFrom  } = req.body;
+    const { roomId, tenantId, occupiedFrom } = req.body;
 
     if (!roomId || !tenantId) {
       return res.status(400).send({ msg: "Room and Tenant are required" });
@@ -239,20 +247,25 @@ const assignTenantToRoom = async (req, res) => {
 };
 
 const vacateRoom = async (req, res) => {
-  const { roomId } = req.body;
+  try {
+    const { roomId } = req.body;
 
-  const room = await Room.findById(roomId);
-  if (!room || room.status !== "Occupied") {
-    return res.status(400).send({ msg: "Room not occupied" });
+    const room = await Room.findById(roomId);
+    if (!room || room.status !== "Occupied") {
+      return res.status(400).send({ msg: "Room not occupied" });
+    }
+
+    room.status = "Available";
+    room.tenant = null;
+    room.occupiedFrom = null;
+
+    await room.save();
+
+    res.send({ msg: "Room vacated successfully" });
+  } catch (error) {
+    console.log("vactaeRoom Error: ", error);
+    res.status(500).send({ msg: "Internal Server Error" });
   }
-
-  room.status = "Available";
-  room.tenant = null;
-  room.occupiedFrom = null;
-
-  await room.save();
-
-  res.send({ msg: "Room vacated successfully" });
 };
 
 module.exports = {

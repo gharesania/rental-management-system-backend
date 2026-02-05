@@ -21,5 +21,7 @@ roomController.getBuildingRoomStats,);
 router.post("/assignTenant", auth, admin,
 roomController.assignTenantToRoom);
 
+router.post("/vacateRoom", auth, admin, roomController.vacateRoom);
+
 
 module.exports = router;
